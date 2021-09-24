@@ -1,10 +1,11 @@
-using System.*;
+using System;
+using System.Collections;
 
 namespace AfricaInternetRoutes.Models
 {
     public class BackEndProcessor
     {
-        public Nations africanNations = new ArrayList();  // list of nations in Africa.
+        public ArrayList africanNations = new ArrayList();  // list of nations in Africa.
 
 
     }
