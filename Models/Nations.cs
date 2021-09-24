@@ -1,5 +1,5 @@
-using System.*;
-
+using System;
+using System.Collections;
 
 namespace AfricaInternetRoutes.Models {
 	/// <summary>
@@ -9,7 +9,7 @@ namespace AfricaInternetRoutes.Models {
     /// </summary>
 	public class Nations {
 		public string officialName { get; set; }  // The official name of the country
-		private var alternativeNames = new ArrayList();
+		private ArrayList alternativeNames = new ArrayList();
 
         /// <summary>
         /// 
