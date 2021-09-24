@@ -1,4 +1,4 @@
-using System;
+using System.*;
 
 
 namespace AfricaInternetRoutes.Models {
@@ -10,6 +10,14 @@ namespace AfricaInternetRoutes.Models {
 	public class Nations {
 		public string officialName { get; set; }  // The official name of the country
 		private var alternativeNames = new ArrayList();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Nations()
+        {
+
+        }
 
 		/// <summary>
         /// method
