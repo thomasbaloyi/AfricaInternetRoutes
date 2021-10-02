@@ -6,6 +6,17 @@ display: block;
   height: 250px;
 }
 
+.marker {
+    fill: #31558d;
+    fill-opacity: .75;
+    transition: all .2s ease-in-out;
+}
+    .marker:hover {
+        fill: #8d3155;
+        fill-opacity: 1;
+        cursor: pointer;
+    }
+
 .country{
   fill:lightgrey;
   stroke: black;
