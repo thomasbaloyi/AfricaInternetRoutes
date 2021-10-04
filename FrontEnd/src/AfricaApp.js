@@ -1,7 +1,7 @@
 import React from 'react';
 import L from 'leaflet'; //import leaflet so as to utilise it for mapping datapoints onto the map of Africa.
 import { Map, TileLayer, GeoJSON } from 'react-leaflet';
-import './AfricaApp.css';  // import the css
+import './App.css';  // import the css
 import 'leaflet/dist/leaflet.css'; //import leaflet css so as to utilise it for mapping datapoints onto the map of Africa.
 import exampleJson from './locationsJson/example.json'; //import the json file with the details of points that need to be mapped onto the map of Africa.
 
@@ -17,9 +17,9 @@ L.Icon.Default.mergeOptions({
 const initialAfricaZoom = 2; //set the initial zoom in so that the user sees the whole continent of Africa only.
 const coordinatesAfricaCenter = [7.943625, 24.329730]; //set center point so that continent appears centrally in the display.
 
-function AfricaApp() {
+function App() {
     return (
-        <div className="AfricaApp">
+        <div className="App">
             <Map center={defaultCenter} zoom={defaultZoom}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; <a href=&quot;https://www.openstreetmap.org/copyright&quot;>OpenStreetMap</a> contributors" />
                 <GeoJSON data={exampleJson} />
@@ -28,4 +28,4 @@ function AfricaApp() {
     );
 }
 
-export default AfricaApp;
+export default App;
