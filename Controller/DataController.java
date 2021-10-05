@@ -51,7 +51,7 @@ public class DataController {
             }
         }
 
-        File afrinicData = new File("../data/" + "asndata.csv");
+        File afrinicData = new File("../RawData/" + "asndata.csv");
         if (!afrinicData.exists()) {
             try {
                 getData(new URL(AFRINIC_LINK), "asndata.csv");
@@ -90,7 +90,7 @@ public class DataController {
     private static void getData(URL link, String filename) {
         try {
             BufferedInputStream inputStream = new BufferedInputStream(link.openStream());
-            FileOutputStream outputStream = new FileOutputStream("../data/"+filename);
+            FileOutputStream outputStream = new FileOutputStream("../RawData/"+filename);
             byte[] data = new byte[1024];
             int byteContent;
             while ((byteContent = inputStream.read(data, 0, 1024)) != -1) {
@@ -108,7 +108,7 @@ public class DataController {
      * @throws FileNotFoundException
      */
     private static Scanner readData(String filename) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("../data/"+filename));
+        Scanner scanner = new Scanner(new File("../RawData/"+filename));
         scanner.useDelimiter("\n");
         return scanner;
     }
