@@ -1,5 +1,3 @@
-package AfricaInternetRoutes;
-
 public class ASN {
     private int asn_num;
     private String reg_date;
