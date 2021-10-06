@@ -6,7 +6,8 @@ import 'leaflet/dist/leaflet.css'; //import leaflet css so as to utilise it for 
 import { json } from 'd3-fetch';
 import { node } from 'prop-types';
 //import exampleJson from './locationsJson/example.json'; //import the json file with the details of points that need to be mapped onto the map of Africa.
-
+import ASNData from '../ProcessedData/ASNData.json'
+import CapitalLocations from './locationsJson/CountryNames.json'
 
 //initial geojson which will be used to map points onto the map.
 const geoJsonInit = {
@@ -35,7 +36,7 @@ function populateAsnData(abbreviation,nationName,capitalLocation) {
 /**
  * function used to create geojson for mapping asns onto the continent of Africa
  */
-export default function geoJsonASNs() {
+function geoJsonASNs() {
     /*
      * Firstly the application will access the ASN data from the ProcessedData folder.
      * In a loop it will check which country needs to be mapped onto the visualisation of Africa.
@@ -44,70 +45,57 @@ export default function geoJsonASNs() {
      */
 
     var asnLocations = geoJsonInit;  // add in the initial elements.
-    var capitalLocations;  // used to contain the data obtained from CountryNames.json
-    var asnData;  //used to contain the data obtained from ASNData.json.
-
-    // include the fs module
-    var fs = require('fs');
-
-    // obtain data from CountryNames.json
-    fs.readFile('./locationsJson/CountryNames.json', (err, data) => {
-        capitalLocations = JSON.parse(data)  //parse through data and convert it from string to a JSON object.
-    });
-
-    //obtain data from ASNData.json
-    fs.readFile('../ProcessedData/ASNData.json', (err, data) => {
-        asnData = JSON.parse(data)  //parse through data and convert it from string to a JSON object.
-    });
+    
 
     //loop through asnData
-    for (var asnfileData in asnData) {
+    ASNData.map((asnfileData) => {
         var countryName = asnfileData.country;
         //loop through capitalLocations to compare with countryName
-        for (var locationData in capitalLocations) {
+        CapitalLocations.map((locationData) => {
             /* 
              * compare countryName with all possible names for a country as listed in CountryNames.
              * if it matches then use populateAsnData function to create the data for our geojson.
              * push this data into the functions array in asnLocations.
              * if we do not find a match then we will assume the name used in the datafile is not a recognised one or we were unable to obtain the country's location.
              */
-            if ((countryName === locationData.name) || (countryName === ("\u0022" + locationData.name + "\u0022"))) {
+            if ((countryName.toLowerCase() === locationData.name.toLowerCase()) || (countryName.toLowerCase() === ("\u0022" + locationData.name.toLowerCase() + "\u0022"))) {
                 asnLocations.features.push(populateAsnData(locationData.abbreviation, locationData.name, locationData.coordinates));
                 break;
             }
-            else if ((countryName === locationData.alternativeName1) || (countryName === ("\u0022" + locationData.alternativeName1 + "\u0022"))) {
+            else if ((countryName.toLowerCase() === locationData.alternativeName1.toLowerCase()) || (countryName.toLowerCase() === ("\u0022" + locationData.alternativeName1.toLowerCase() + "\u0022"))) {
                 asnLocations.features.push(populateAsnData(locationData.abbreviation, locationData.name, locationData.coordinates));
                 break;
             }
-            else if ((countryName === locationData.alternativeName2) || (countryName === ("\u0022" + locationData.alternativeName2 + "\u0022"))) {
+            else if ((countryName.toLowerCase() === locationData.alternativeName2.toLowerCase()) || (countryName.toLowerCase() === ("\u0022" + locationData.alternativeName2.toLowerCase() + "\u0022"))) {
                 asnLocations.features.push(populateAsnData(locationData.abbreviation, locationData.name, locationData.coordinates));
                 break;
             }
-            else if ((countryName === locationData.alternativeName3) || (countryName === ("\u0022" + locationData.alternativeName3 + "\u0022"))) {
+            else if ((countryName.toLowerCase() === locationData.alternativeName3.toLowerCase()) || (countryName.toLowerCase() === ("\u0022" + locationData.alternativeName3.toLowerCase() + "\u0022"))) {
                 asnLocations.features.push(populateAsnData(locationData.abbreviation, locationData.name, locationData.coordinates));
                 break;
             }
-            else if ((countryName === locationData.alternativeName4) || (countryName === ("\u0022" + locationData.alternativeName4 + "\u0022"))) {
+            else if ((countryName.toLowerCase() === locationData.alternativeName4.toLowerCase()) || (countryName.toLowerCase() === ("\u0022" + locationData.alternativeName4.toLowerCase() + "\u0022"))) {
                 asnLocations.features.push(populateAsnData(locationData.abbreviation, locationData.name, locationData.coordinates));
                 break;
             }
-            else if ((countryName === locationData.alternativeName5) || (countryName === ("\u0022" + locationData.alternativeName5 + "\u0022"))) {
+            else if ((countryName.toLowerCase() === locationData.alternativeName5.toLowerCase()) || (countryName.toLowerCase() === ("\u0022" + locationData.alternativeName5.toLowerCase() + "\u0022"))) {
                 asnLocations.features.push(populateAsnData(locationData.abbreviation, locationData.name, locationData.coordinates));
                 break;
             }
-            else if ((countryName === locationData.alternativeName6) || (countryName === ("\u0022" + locationData.alternativeName6 + "\u0022"))) {
+            else if ((countryName.toLowerCase() === locationData.alternativeName6.toLowerCase()) || (countryName.toLowerCase() === ("\u0022" + locationData.alternativeName6 + "\u0022"))) {
                 asnLocations.features.push(populateAsnData(locationData.abbreviation, locationData.name, locationData.coordinates));
                 break;
             }
-        }
-    }
+        });
+    });
 
     return asnLocations;  //return the geojson object.
 }
 
 
+var exampleJson = geoJsonASNs();
 
-/*delete L.Icon.Default.prototype._getIconUrl;
+delete L.Icon.Default.prototype._getIconUrl;
 
 //apply blue pins as markers for the mapping.
 L.Icon.Default.mergeOptions({
@@ -116,7 +104,7 @@ L.Icon.Default.mergeOptions({
    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-const initialAfricaZoom = 2; //set the initial zoom in so that the user sees the whole continent of Africa only.
+const initialAfricaZoom = 3; //set the initial zoom in so that the user sees the whole continent of Africa only.
 const coordinatesAfricaCenter = [7.943625, 24.329730]; //set center point so that continent appears centrally in the display.
 
 function App() {
@@ -130,4 +118,4 @@ function App() {
     );
 }
 
-export default App;*/
+export default App;
