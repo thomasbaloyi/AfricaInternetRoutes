@@ -3,9 +3,38 @@ import L from 'leaflet'; //import leaflet so as to utilise it for mapping datapo
 import { Map, TileLayer, GeoJSON } from 'react-leaflet';
 import './App.css';  // import the css
 import 'leaflet/dist/leaflet.css'; //import leaflet css so as to utilise it for mapping datapoints onto the map of Africa.
-import exampleJson from './locationsJson/example.json'; //import the json file with the details of points that need to be mapped onto the map of Africa.
+//import exampleJson from './locationsJson/example.json'; //import the json file with the details of points that need to be mapped onto the map of Africa.
 
-delete L.Icon.Default.prototype._getIconUrl;
+
+//Create the map and tiles
+
+/* 
+ * set default center of the map
+ * The lat and lng of Bikoro, DRC  was found to be the best center position with 
+ * preset zoom of 3 which is able to visualise the whole of Africa.
+ * Testing this was done using a combination of codesandbox.io and Google Maps.
+ */
+const africamap = L.map("airmap").setView([-1.014845, 18.024018], 3);
+// use openstreet to visualise the map.
+const attribution =
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const tiles = L.tileLayer(tileUrl, { attribution });
+tiles.addTo(mymap);
+
+/**
+ * function used to map asns onto the continent of Africa
+ */
+export default function mapASNs() {
+    /*
+     * Firstly the application will access the ASN data from the ProcessedData folder.
+     * In a loop it will check which country needs to be added
+     */
+}
+
+
+/*delete L.Icon.Default.prototype._getIconUrl;
 
 //apply blue pins as markers for the mapping.
 L.Icon.Default.mergeOptions({
@@ -28,4 +57,4 @@ function App() {
     );
 }
 
-export default App;
+export default App;*/
