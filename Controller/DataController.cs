@@ -14,8 +14,10 @@ namespace AfricaInternetRoutes.Controller
 		static string AFRINIC_URI = "https://stats.afrinic.net/index.php/download/asndata.csv" ;
 
 		static string CAIDA_URI = "https://publicdata.caida.org/datasets/as-relationships/serial-2/20210901.as-rel2.txt.bz2";
+		
+		static string CAIDA_CONES_URI = "https://publicdata.caida.org/datasets/as-relationships/serial-1/20210901.ppdc-ases.txt.bz2";
 	
-		static string PCH_URI = "https://www.pch.net/ixp/data" ;
+		static string PCH_URI = "https://www.pch.net/api/ixp/directory/active/?format=csv" ;
 
 		static string ripe = "https://www.maxmind.com/en/geoip2-services-and-databases" ;
 
@@ -26,6 +28,8 @@ namespace AfricaInternetRoutes.Controller
 			#region Download all datasets
 			downloadData(AFRINIC_URI, "asndata.csv");
 			downloadData(CAIDA_URI, "20210901.as-rel2.txt.bz2");
+			downloadData(PCH_URI, "ixpdata.csv");
+			downloadData(CAIDA_CONES_URI, "20210901.ppdc-ases.txt.bz2");
 			#endregion
 
 			#region Process data
@@ -38,11 +42,53 @@ namespace AfricaInternetRoutes.Controller
 			SerializeRels(p2p,"P2PRelationshipData.json");
 			SerializeRels(p2c, "P2CRelationshipData.json");
 
+			//List<ConeCustomer> coneCustomers = getCones("20210901.ppdc-ases.txt");
+			//SerializeCC(coneCustomers, "Cones.json");
 			#endregion
 
 			Console.WriteLine("Done");
 		}
 
+		/// Serializes P2C relationships
+		private static void SerializeCC(List<ConeCustomer> list, string filename)
+		{
+			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+			string json = JsonSerializer.Serialize(list, options);
+			File.WriteAllText("../ProcessedData/" + filename, json);
+		}
+
+		public static List<ConeCustomer> getCones(string filename)
+        {
+			StreamReader cones = DataController.readData(filename);
+			List<ConeCustomer> coneCustomers = new List<ConeCustomer>(0);
+			while (!cones.EndOfStream)
+            {
+				cones.ReadLine();
+				cones.ReadLine();
+
+				string[] cone_asn = cones.ReadLine().Split(" ");
+                
+				List<Customer> customerList = new List<Customer>(0);
+				for (int i=1; i<cone_asn.Length; i++)
+                {
+					Customer cust = new Customer
+                    {
+						customer_as = int.Parse(cone_asn[i])
+                    };
+					customerList.Add(cust);
+                }
+				ConeCustomer coneCustomer = new ConeCustomer
+                {
+					cone_as = int.Parse(cone_asn[0]),
+					customers = customerList
+                };
+				coneCustomers.Add(coneCustomer);
+                
+            }
+			return coneCustomers;
+        }
+
+		/// Returns a list of P2C relationships
 		public static List<ProviderCustomer> getP2CRelationships(string filename)
 		{
 			StreamReader afrinic = DataController.readData(filename);
@@ -66,6 +112,7 @@ namespace AfricaInternetRoutes.Controller
 			return p2cRelationships;
 		}
 
+		/// Serializes P2C relationships
 		private static void SerializeRels(List<ProviderCustomer> list, string filename)
 		{
 			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
@@ -73,7 +120,7 @@ namespace AfricaInternetRoutes.Controller
 			File.WriteAllText("../ProcessedData/" + filename, json);
 		}
 
-		/// 
+		/// Serializes P2P relationships
 		private static void SerializeRels(List<PeerPeer> list, string filename)
 		{
 			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
@@ -81,7 +128,7 @@ namespace AfricaInternetRoutes.Controller
 			File.WriteAllText("../ProcessedData/" + filename, json);
 		}
 		
-		/// 
+		/// Returns a list of P2P relationships
 		public static List<PeerPeer> getP2PRelationships(string filename)
 		{
 			StreamReader afrinic = DataController.readData(filename);
