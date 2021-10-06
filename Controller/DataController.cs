@@ -14,6 +14,8 @@ namespace AfricaInternetRoutes.Controller
 		static string AFRINIC_URI = "https://stats.afrinic.net/index.php/download/asndata.csv" ;
 
 		static string CAIDA_URI = "https://publicdata.caida.org/datasets/as-relationships/serial-2/20210901.as-rel2.txt.bz2";
+		
+		static string CAIDA_CONES_URI = "https://publicdata.caida.org/datasets/as-relationships/serial-1/20210901.ppdc-ases.txt.bz2";
 	
 		static string PCH_URI = "https://www.pch.net/api/ixp/directory/active/?format=csv" ;
 
@@ -27,6 +29,7 @@ namespace AfricaInternetRoutes.Controller
 			downloadData(AFRINIC_URI, "asndata.csv");
 			downloadData(CAIDA_URI, "20210901.as-rel2.txt.bz2");
 			downloadData(PCH_URI, "ixpdata.csv");
+			downloadData(CAIDA_CONES_URI, "20210901.ppdc-ases.txt.bz2");
 			#endregion
 
 			#region Process data
@@ -38,7 +41,6 @@ namespace AfricaInternetRoutes.Controller
 			List<ProviderCustomer> p2c = getP2CRelationships("20210901.as-rel2.txt");
 			SerializeRels(p2p,"P2PRelationshipData.json");
 			SerializeRels(p2c, "P2CRelationshipData.json");
-
 			#endregion
 
 			Console.WriteLine("Done");
@@ -68,7 +70,7 @@ namespace AfricaInternetRoutes.Controller
 			return p2cRelationships;
 		}
 
-		///
+		/// Serializes P2C relationships
 		private static void SerializeRels(List<ProviderCustomer> list, string filename)
 		{
 			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
@@ -76,7 +78,7 @@ namespace AfricaInternetRoutes.Controller
 			File.WriteAllText("../ProcessedData/" + filename, json);
 		}
 
-		/// 
+		/// Serializes P2P relationships
 		private static void SerializeRels(List<PeerPeer> list, string filename)
 		{
 			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
