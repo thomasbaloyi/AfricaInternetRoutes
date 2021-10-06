@@ -6,7 +6,8 @@ An interactive web application showing the internet interconnections on the Afri
 ## Table of Contents:
 1. Installation
 2. Usage
-3. Credits
+3. Notes
+4. Credits
 
 ## Installation: 
 Download the zip version of the repository
@@ -15,6 +16,12 @@ Download the zip version of the repository
 1. Open command line
 2. Cd into the AfricaInternetRoutes file saved locally on your machine
 3. Type command: npm start
-       
+
+## Notes
+To run the server-side component of the application:
+1. Navigate to the AfricaInternetRoutes/Controller directory
+2. Type command: dotnet run
+3. This will download, process and store various data files in the AfricaInternetRoutes/ProcessedData directory
+
 ## Credit:
 Done by: Ravendran Govender (GVNRAV007), Takudzwa Mabika (MBKTAK003), Thomas Baloyi (BLYTHO004)
