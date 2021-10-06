@@ -22,7 +22,7 @@
     </div>
     <div id="interconnectionsMap"></div>
         <script>
-            import {geoJsonASNs} from "./AfricaApp.js";
+            import {geoJsonASNs} from "./App.js";
 
             //Create map and tiles.
             /*
@@ -37,7 +37,7 @@
 
             const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
             const tiles = L.tileLayer(tileUrl, { attribution });
-            tiles.addTo(mymap);
+            tiles.addTo(africamap);
 
             document.getElementById("ASNs").addEventListener("click", function () {
                 var asnGeoJson = geoJsonASNs();

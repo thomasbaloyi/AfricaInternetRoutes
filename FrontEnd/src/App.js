@@ -3,9 +3,11 @@ import L from "leaflet"; //import leaflet so as to utilise it for mapping datapo
 import { Map, TileLayer, GeoJSON } from "react-leaflet";
 import "./App.css"; // import the css
 import "leaflet/dist/leaflet.css"; //import leaflet css so as to utilise it for mapping datapoints onto the map of Africa.
-//import exampleJson from './locationsJson/example.json'; //import the json file with the details of points that need to be mapped onto the map of Africa.
-import ASNData from "../ProcessedData/ASNData.json";
-import CapitalLocations from "./locationsJson/CountryNames.json";
+import ASNData from "../ProcessedData/ASNData.json"; // obtain asn data
+import CapitalLocations from "./locationsJson/CountryNames.json"; // obtain african nation geolocation data.
+import p2crd from "../ProcessedData/P2CRelationshipData.json" // obtain peer to customer data Note: p2crd is acronym for P2CRelationshipData.
+import p2prd from "../ProcessedData/P2PRelationshipData.json" // obtain peer to peer data Note: p2crd is acronym for P2PRelationshipData.
+
 
 //initial geojson which will be used to map points onto the map.
 const geoJsonInit = {
@@ -14,13 +16,14 @@ const geoJsonInit = {
 };
 
 //function to create geoJson data
-function populateAsnData(abbreviation, nationName, capitalLocation) {
+function populateAsnData(abbreviation, nationName, capitalLocation,asnValue) {
     var jsonObj = {
         type: "Feature",
         id: abbreviation, // assign the country's abbreviation as its ID.
         properties: {
             name: nationName, //add country Name.
-            popupContent: nationName
+            popupContent: nationName,
+            asnNum: asnValue //assign the asn number.
         },
         geometry: {
             type: "Point", // indicate that this a point on the map.
@@ -31,10 +34,27 @@ function populateAsnData(abbreviation, nationName, capitalLocation) {
     return jsonObj; // return the json object to be pushed to the features array.
 }
 
+//function to create geoJson data
+function populateConnectionData(capitalLocation, colorOption) {
+    var jsonObj = {
+        type: "Feature",
+        geometry: {
+            type: "LineString", // indicate that this a point on the map.
+            coordinates: capitalLocation, // add in the country's latitude and longitude using the capital city.
+            style: {
+                fill: colorOption // set color of line.
+            }
+        }
+    };
+
+    return jsonObj; // return the json object to be pushed to the features array.
+}
+
+
 /**
  * function used to create geojson for mapping asns onto the continent of Africa
  */
-function geoJsonASNs() {
+export function geoJsonASNs() {
     /*
      * Firstly the application will access the ASN data from the ProcessedData folder.
      * In a loop it will check which country needs to be mapped onto the visualisation of Africa.
@@ -47,6 +67,7 @@ function geoJsonASNs() {
     //loop through asnData
     ASNData.map((asnfileData) => {
         var countryName = asnfileData.country;
+        var asnNumber = asnfileData.asn_num;
         //loop through capitalLocations to compare with countryName
         CapitalLocations.map((locationData) => {
             /*
@@ -64,7 +85,8 @@ function geoJsonASNs() {
                     populateAsnData(
                         locationData.abbreviation,
                         locationData.name,
-                        locationData.coordinates
+                        locationData.coordinates,
+                        asnNumber
                     )
                 );
             } else if (
@@ -77,7 +99,8 @@ function geoJsonASNs() {
                     populateAsnData(
                         locationData.abbreviation,
                         locationData.name,
-                        locationData.coordinates
+                        locationData.coordinates,
+                        asnNumber
                     )
                 );
             } else if (
@@ -90,7 +113,8 @@ function geoJsonASNs() {
                     populateAsnData(
                         locationData.abbreviation,
                         locationData.name,
-                        locationData.coordinates
+                        locationData.coordinates,
+                        asnNumber
                     )
                 );
             } else if (
@@ -103,7 +127,8 @@ function geoJsonASNs() {
                     populateAsnData(
                         locationData.abbreviation,
                         locationData.name,
-                        locationData.coordinates
+                        locationData.coordinates,
+                        asnNumber
                     )
                 );
             } else if (
@@ -116,7 +141,8 @@ function geoJsonASNs() {
                     populateAsnData(
                         locationData.abbreviation,
                         locationData.name,
-                        locationData.coordinates
+                        locationData.coordinates,
+                        asnNumber
                     )
                 );
             } else if (
@@ -129,7 +155,8 @@ function geoJsonASNs() {
                     populateAsnData(
                         locationData.abbreviation,
                         locationData.name,
-                        locationData.coordinates
+                        locationData.coordinates,
+                        asnNumber
                     )
                 );
             } else if (
@@ -142,7 +169,8 @@ function geoJsonASNs() {
                     populateAsnData(
                         locationData.abbreviation,
                         locationData.name,
-                        locationData.coordinates
+                        locationData.coordinates,
+                        asnNumber
                     )
                 );
             }
@@ -152,7 +180,78 @@ function geoJsonASNs() {
     return asnLocations; //return the geojson object.
 }
 
-var exampleJson = geoJsonASNs();
+var mappingGeoJson = geoJsonASNs();
+
+export function geoPtCASNs() {
+    /*
+     * Firstly the application will access the ASN data from the ProcessedData folder.
+     * In a loop it will check which country needs to be mapped onto the visualisation of Africa.
+     * it will then create a json object for each nation following the format of example.json.
+     * The coordinates of each nation will be retrieved from CountryNames.json
+     */
+
+    asnLocations = mappingGeoJson  // copy mappingGeoJson so as to avoid iterating through recently added features.
+
+    //loop through jsonData
+    p2crd.map((asnfileData) => {
+        var customerASN = asnfileData.customer_as;
+        var providerASN = asnfileData.provider_as;
+        var locations = [];
+        //loop through mappingGeoJson to compare with countryName
+        mappingGeoJson.map((locationData) => {
+            /*
+             * compare the asn values to the asn of the point in mappingGeoJson
+             */
+            var nationASN = locationData.properties.asnNum;
+            if (
+                customerASN === nationASN ||
+                providerASN === nationASN
+            ) {
+                locations.push(
+                    locationData.geometry.coordinates
+                );
+            } 
+        });
+        asnLocations.features.push(populateConnectionData(locations, "red"));
+    });
+
+    return asnLocations; //return the geojson object.
+}
+export function geoPtPASNs() {
+    /*
+     * Firstly the application will access the ASN data from the ProcessedData folder.
+     * In a loop it will check which country needs to be mapped onto the visualisation of Africa.
+     * it will then create a json object for each nation following the format of example.json.
+     * The coordinates of each nation will be retrieved from CountryNames.json
+     */
+
+    asnLocations = mappingGeoJson  // copy mappingGeoJson so as to avoid iterating through recently added features.
+
+    //loop through jsonData
+    p2prd.map((asnfileData) => {
+        var providerASN1 = asnfileData.peer_as1;
+        var providerASN2 = asnfileData.peer_as2;
+        var locations = [];
+        //loop through mappingGeoJson to compare with countryName
+        mappingGeoJson.map((locationData) => {
+            /*
+             * compare the asn values to the asn of the point in mappingGeoJson
+             */
+            var nationASN = locationData.properties.asnNum;
+            if (
+                providerASN1 === nationASN ||
+                providerASN2 === nationASN
+            ) {
+                locations.push(
+                    locationData.geometry.coordinates
+                );
+            }
+        });
+        asnLocations.features.push(populateConnectionData(locations, "blue"));
+    });
+
+    return asnLocations; //return the geojson object.
+}
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -180,7 +279,7 @@ function App() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-                <GeoJSON data={exampleJson} />
+                <GeoJSON data={mappingGeoJson} />
             </Map>
         </div>
     );
