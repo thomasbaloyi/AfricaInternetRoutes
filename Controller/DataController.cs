@@ -15,7 +15,7 @@ namespace AfricaInternetRoutes.Controller
 
 		static string CAIDA_URI = "https://publicdata.caida.org/datasets/as-relationships/serial-2/20210901.as-rel2.txt.bz2";
 	
-		static string PCH_URI = "https://www.pch.net/ixp/data" ;
+		static string PCH_URI = "https://www.pch.net/api/ixp/directory/active/?format=csv" ;
 
 		static string ripe = "https://www.maxmind.com/en/geoip2-services-and-databases" ;
 
@@ -26,6 +26,7 @@ namespace AfricaInternetRoutes.Controller
 			#region Download all datasets
 			downloadData(AFRINIC_URI, "asndata.csv");
 			downloadData(CAIDA_URI, "20210901.as-rel2.txt.bz2");
+			downloadData(PCH_URI, "ixpdata.csv");
 			#endregion
 
 			#region Process data
@@ -43,6 +44,7 @@ namespace AfricaInternetRoutes.Controller
 			Console.WriteLine("Done");
 		}
 
+		///
 		public static List<ProviderCustomer> getP2CRelationships(string filename)
 		{
 			StreamReader afrinic = DataController.readData(filename);
@@ -66,6 +68,7 @@ namespace AfricaInternetRoutes.Controller
 			return p2cRelationships;
 		}
 
+		///
 		private static void SerializeRels(List<ProviderCustomer> list, string filename)
 		{
 			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
