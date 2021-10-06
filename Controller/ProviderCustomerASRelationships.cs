@@ -1,6 +1,0 @@
-public class ProviderCustomerASRelationships
-{
-    public int provider_as { get; set; }
-    public int customer_as { get; set; }
-    public string source { get; set; }
-}
