@@ -15,7 +15,8 @@ Download the zip version of the repository
 ## Usage: Web based application:
 1. Open command line
 2. Cd into the AfricaInternetRoutes file saved locally on your machine
-3. Type command: npm start
+3. Cd into FrontEnd
+4. Type command: npm start
 
 ## Notes
 To run the server-side component of the application:
