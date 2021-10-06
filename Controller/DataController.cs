@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Net;
 using System.Collections.Generic;
+using System.Text.Json;
 
 /**
 	* Collects and filters data from sources
@@ -13,9 +14,6 @@ using System.Collections.Generic;
 	*/
 public class DataController
 {
-	/** Stores all unique ASNs */
-	private static Dictionary<int, ASN> dictionary;
-
 	static string AFRINIC_URI = "https://stats.afrinic.net/index.php/download/asndata.csv" ;
 
 	static string CAIDA_URI = "https://publicdata.caida.org/datasets/as-relationships/serial-2/20210901.as-rel2.txt.bz2";
@@ -31,29 +29,50 @@ public class DataController
 
 		downloadData(AFRINIC_URI, "asndata.csv");
 		downloadData(CAIDA_URI, "20210901.as-rel2.txt.bz2");
-		processAfrinicData();
-
-
+		
+		List<ASN> asns = processAfrinicData();
+		SerializeASNs(asns, "ASNData.json");
 		Console.Write("Done");
+	}
+
+	private static void SerializeASNs(List<ASN> list, string filename)
+    {
+		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+		string json = JsonSerializer.Serialize(list, options);
+		File.WriteAllText("../ProcessedData/" + filename, json);
+		Console.WriteLine(File.ReadAllText("../ProcessedData/" + filename));
 	}
 	
 	/// <summary>
-    /// Adds data from asndata.csv to a dictionary
+    /// Adds data from asndata.csv into a list 
     /// </summary>
-	private static void processAfrinicData() 
+    /// <returns></returns>
+	private static List<ASN> processAfrinicData() 
 	{
 		StreamReader afrinic = DataController.readData("asndata.csv");
-		dictionary = new Dictionary < int, ASN > (0);
 		afrinic.ReadLine();
+		List<ASN> list = new List<ASN>(0);
 		while (!afrinic.EndOfStream)
 		{
 			String[] asn = afrinic.ReadLine().Split(",");
 			if (asn.Length == 8)
 			{
-				dictionary.Add(int.Parse(asn[0]), new ASN(int.Parse(asn[0]), asn[1], asn[2], asn[3], int.Parse(asn[4]), asn[5], asn[6], asn[7]));
+				ASN asnObject = new ASN
+				{
+					asn_num = int.Parse(asn[0]),
+					reg_date = asn[1],
+					country = asn[2],
+					region = asn[3],
+					reg_year = int.Parse(asn[4]),
+					industry = asn[5],
+					org_category = asn[6],
+					asn_type = asn[7]
+				};
+				list.Add(asnObject);
 			}
 		}
 		afrinic.Close();
+		return list;
 	}
 
 	/// <summary>
