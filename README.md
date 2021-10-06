@@ -18,6 +18,9 @@ Download the zip version of the repository
 3. Cd into FrontEnd
 4. Type command: npm start
 
+## Usage: Web based application 2:
+1. Use the following link to visualise data: https://codesandbox.io/s/capstone-air-project-9hqg7
+
 ## Notes
 To run the server-side component of the application:
 1. Navigate to the AfricaInternetRoutes/Controller directory
