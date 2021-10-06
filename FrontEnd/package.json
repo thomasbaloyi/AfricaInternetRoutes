@@ -1,0 +1,46 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Capstone Project Front-end to visualise Internet interconnections in Africa a.k.a. AIR Capstone Proejct",
+  "main": "index.js",
+  "dependencies": {
+    "leaflet": "1.7.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-leaflet": "^2.6.3",
+    "react-scripts": "3.4.1"
+  },
+  "devDependencies": {
+    "@babel/runtime": "7.13.8",
+    "typescript": "4.1.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomasbaloyi/AfricaInternetRoutes.git"
+  },
+  "keywords": [
+    "AIR",
+    "Africa",
+    "ASNs",
+    "IXPs",
+    "National"
+  ],
+  "author": "Thomas Baloyi, Raven Govender, Takudzwa Mabika",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thomasbaloyi/AfricaInternetRoutes/issues"
+  },
+  "homepage": "https://github.com/thomasbaloyi/AfricaInternetRoutes#readme"
+}
