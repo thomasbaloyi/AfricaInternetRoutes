@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Diagnostics;
 
 /**
 	* Collects and filters data from sources
@@ -26,21 +27,48 @@ public class DataController
 
 	public static void Main(String[] args)
 	{
-
-		downloadData(AFRINIC_URI, "asndata.csv");
+        #region Download all datasets
+        downloadData(AFRINIC_URI, "asndata.csv");
 		downloadData(CAIDA_URI, "20210901.as-rel2.txt.bz2");
-		
-		List<ASN> asns = processAfrinicData();
+        #endregion
+
+        #region Process data
+        List<ASN> asns = processAfrinicData();
 		SerializeASNs(asns, "ASNData.json");
-		Console.Write("Done");
+
+		decompressBZ2("20210901.as-rel2.txt.bz2");
+        #endregion
+
+        Console.WriteLine("Done");
 	}
 
+	public static void decompressBZ2(string filename)
+    {
+		Console.WriteLine("Decompressing {0}", filename);
+		string command = "tar -xf ../RawData/" + filename + " ../RawData/"; 
+
+		var startInfo = new ProcessStartInfo
+		{            
+			FileName = "cmd.exe",
+			Arguments = "/C " + command,
+			WindowStyle = ProcessWindowStyle.Hidden,
+			CreateNoWindow = true,
+			UseShellExecute = false
+		};
+
+		Process.Start(startInfo);
+    }
+
+	/// <summary>
+    ///  Creates a JSON list of ASNs stored in list. 
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="filename"></param>
 	private static void SerializeASNs(List<ASN> list, string filename)
     {
 		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
 		string json = JsonSerializer.Serialize(list, options);
 		File.WriteAllText("../ProcessedData/" + filename, json);
-		Console.WriteLine(File.ReadAllText("../ProcessedData/" + filename));
 	}
 	
 	/// <summary>
@@ -82,8 +110,17 @@ public class DataController
 	/// <param name="filename"></param>
 	private static void downloadData(String link, String filename)
 	{
-		WebClient webClient = new WebClient();
-		webClient.DownloadFile(link, "../RawData/" + filename);
+		if (File.Exists("../RawData/" + filename))
+        {
+			Console.WriteLine(filename + " exists");
+        }
+		else
+		{
+			Console.WriteLine("Downloading {0}", filename);
+			WebClient webClient = new WebClient();
+			webClient.DownloadFile(link, "../RawData/" + filename);
+		}
+		
 	}
 	
 	/// <summary>
