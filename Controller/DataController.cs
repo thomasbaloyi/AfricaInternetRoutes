@@ -41,12 +41,54 @@ namespace AfricaInternetRoutes.Controller
 			List<ProviderCustomer> p2c = getP2CRelationships("20210901.as-rel2.txt");
 			SerializeRels(p2p,"P2PRelationshipData.json");
 			SerializeRels(p2c, "P2CRelationshipData.json");
+
+			//List<ConeCustomer> coneCustomers = getCones("20210901.ppdc-ases.txt");
+			//SerializeCC(coneCustomers, "Cones.json");
 			#endregion
 
 			Console.WriteLine("Done");
 		}
 
-		///
+		/// Serializes P2C relationships
+		private static void SerializeCC(List<ConeCustomer> list, string filename)
+		{
+			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+			string json = JsonSerializer.Serialize(list, options);
+			File.WriteAllText("../ProcessedData/" + filename, json);
+		}
+
+		public static List<ConeCustomer> getCones(string filename)
+        {
+			StreamReader cones = DataController.readData(filename);
+			List<ConeCustomer> coneCustomers = new List<ConeCustomer>(0);
+			while (!cones.EndOfStream)
+            {
+				cones.ReadLine();
+				cones.ReadLine();
+
+				string[] cone_asn = cones.ReadLine().Split(" ");
+                
+				List<Customer> customerList = new List<Customer>(0);
+				for (int i=1; i<cone_asn.Length; i++)
+                {
+					Customer cust = new Customer
+                    {
+						customer_as = int.Parse(cone_asn[i])
+                    };
+					customerList.Add(cust);
+                }
+				ConeCustomer coneCustomer = new ConeCustomer
+                {
+					cone_as = int.Parse(cone_asn[0]),
+					customers = customerList
+                };
+				coneCustomers.Add(coneCustomer);
+                
+            }
+			return coneCustomers;
+        }
+
+		/// Returns a list of P2C relationships
 		public static List<ProviderCustomer> getP2CRelationships(string filename)
 		{
 			StreamReader afrinic = DataController.readData(filename);
@@ -86,7 +128,7 @@ namespace AfricaInternetRoutes.Controller
 			File.WriteAllText("../ProcessedData/" + filename, json);
 		}
 		
-		/// 
+		/// Returns a list of P2P relationships
 		public static List<PeerPeer> getP2PRelationships(string filename)
 		{
 			StreamReader afrinic = DataController.readData(filename);
