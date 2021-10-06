@@ -34,19 +34,54 @@ namespace AfricaInternetRoutes.Controller
 
 			decompressBZ2("20210901.as-rel2.txt.bz2");
 			List<PeerPeer> p2p = getP2PRelationships("20210901.as-rel2.txt");
+			List<ProviderCustomer> p2c = getP2CRelationships("20210901.as-rel2.txt");
 			SerializeRels(p2p,"P2PRelationshipData.json");
+			SerializeRels(p2c, "P2CRelationshipData.json");
+
 			#endregion
 
 			Console.WriteLine("Done");
 		}
 
-		private static void SerializeRels(List<PeerPeer> list, string filename)
+		public static List<ProviderCustomer> getP2CRelationships(string filename)
+		{
+			StreamReader afrinic = DataController.readData(filename);
+			List<ProviderCustomer> p2cRelationships = new List<ProviderCustomer>(0);
+			while (!afrinic.EndOfStream)
+			{
+				string[] relationship = afrinic.ReadLine().Split("|");
+
+				if (relationship.Length==4 && int.Parse(relationship[2])==-1)
+				{
+					ProviderCustomer p2c = new ProviderCustomer
+					{
+						provider_as = int.Parse(relationship[0]),
+						customer_as = int.Parse(relationship[1]),
+						source = relationship[3]
+					};
+					p2cRelationships.Add(p2c);
+				}
+			}
+
+			return p2cRelationships;
+		}
+
+		private static void SerializeRels(List<ProviderCustomer> list, string filename)
 		{
 			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
 			string json = JsonSerializer.Serialize(list, options);
 			File.WriteAllText("../ProcessedData/" + filename, json);
 		}
 
+		/// 
+		private static void SerializeRels(List<PeerPeer> list, string filename)
+		{
+			JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+			string json = JsonSerializer.Serialize(list, options);
+			File.WriteAllText("../ProcessedData/" + filename, json);
+		}
+		
+		/// 
 		public static List<PeerPeer> getP2PRelationships(string filename)
 		{
 			StreamReader afrinic = DataController.readData(filename);
