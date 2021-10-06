@@ -5,8 +5,11 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6414A39E-705B-453C-85A5-E34C61B71B34}"
 	ProjectSection(SolutionItems) = preProject
-		ASN.cs = ASN.cs
+		..\Model\ASN.cs = ..\Model\ASN.cs
+		..\Model\ASRelationship.cs = ..\Model\ASRelationship.cs
 		DataController.cs = DataController.cs
+		..\Model\PeerPeer.cs = ..\Model\PeerPeer.cs
+		..\Model\ProviderCustomer.cs = ..\Model\ProviderCustomer.cs
 	EndProjectSection
 EndProject
 Global
